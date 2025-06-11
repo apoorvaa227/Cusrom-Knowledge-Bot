@@ -24,14 +24,8 @@ from llama_index.core.memory import ChatMemoryBuffer
 from llama_index.core.chat_engine import ContextChatEngine
 from llama_index.vector_stores.pinecone import PineconeVectorStore
 from pinecone import Pinecone, ServerlessSpec # Pinecone vector store
-<<<<<<< HEAD
 # from llama_index.core.node_parser import SimpleNodeParser
 from intent_classifier import classify_intent
-=======
-from llama_index.core.node_parser import SimpleNodeParser
-import asyncio
-import sys
->>>>>>> 562a91bc295ba799c5adbed395fa74d04b7ce5a6
 
 tarot_deck = [
     {
@@ -89,31 +83,10 @@ def load_documents(filepath):
     loader = PyMuPDFReader()
     return loader.load(filepath)
 
-<<<<<<< HEAD
     
 def Setup_Model():
     embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
     llm = ChatOllama(model="llama3")
-=======
-def classify_intent(question):
-    q = question.lower()
-    if any(w in q for w in ["will", "can", "should", "do i"]):
-        return "yes_no"
-    elif any(w in q for w in ["when", "how long", "time"]):
-        return "timeline"
-    elif any(w in q for w in ["why", "reason", "cause"]):
-        return "insight"
-    elif any(w in q for w in ["what should", "focus", "advice", "guidance"]):
-        return "guidance"
-    else:
-        return "general"
-    
-
-
-def Setup_Model():
-    embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    llm = ChatOllama(model="llama3.2")  # <--- changed here to gemma:2b
->>>>>>> 562a91bc295ba799c5adbed395fa74d04b7ce5a6
     llm_wrapped = LangChainLLM(llm)
     Settings.llm = llm_wrapped
     Settings.embed_model = embed_model
@@ -196,12 +169,8 @@ st.markdown("Ask questions about tarot cards. The model uses interpretations fro
 if 'chat_engine' not in st.session_state:                          # <-- NEW: Persistent session state
     with st.spinner("Setting up model and index (this may take a minute)..."):   # <-- NEW: Loading spinner
         Setup_Model()                                                # <-- SAME function call
-<<<<<<< HEAD
         index = GetIndex("sample_tarot_meanings.pdf", force_rebuild=True)                   # <-- SAME but you can change file path here
-=======
-        index = GetIndex("sample_tarot_meanings.pdf")                   # <-- SAME but you can change file path here
->>>>>>> 562a91bc295ba799c5adbed395fa74d04b7ce5a6
-        retriever = index.as_retriever(similarity_top_k=8)
+        retriever = index.as_retriever(similarity_top_k=3)
         memory = ChatMemoryBuffer.from_defaults(token_limit=1000)
         chat_engine = ContextChatEngine.from_defaults(
             retriever=retriever,
@@ -219,37 +188,23 @@ if user_input:
     with st.spinner("Thinking..."):
         # 1. Classify user intent
         intent = classify_intent(user_input)
-<<<<<<< HEAD
         st.write(f"🔍 Detected Intent:** {intent}")
-=======
-        st.write(f"**🔍 Detected Intent:** `{intent}`")
->>>>>>> 562a91bc295ba799c5adbed395fa74d04b7ce5a6
 
         # 2. Draw cards based on intent
         num_cards = 3
         drawn_cards = draw_cards(num_cards)
         drawn_card_names = [f"{c['name']} ({c['orientation']})" for c in drawn_cards]
-<<<<<<< HEAD
         st.write("🃏 Drawn Cards:", ", ".join(drawn_card_names))
-=======
-        st.write("**🃏 Drawn Cards:**", ", ".join(drawn_card_names))
->>>>>>> 562a91bc295ba799c5adbed395fa74d04b7ce5a6
 
         # 3. Compose the query to send to the LLM
         card_text = "\n".join([f"{c['name']} ({c['orientation']}): {c['meanings'][c['orientation']]}" for c in drawn_cards])
         prompt = (
-            f"You are a helpful tarot expert. The user has asked a question.\n\n"
-<<<<<<< HEAD
-            f"*User's question:* {user_input}\n"
-            f"*Detected Intent:* {intent}\n"
-            f"*Cards drawn:*\n{card_text}\n\n"
-=======
-            f"**User's question:** {user_input}\n"
-            f"**Detected Intent:** {intent}\n"
-            f"**Cards drawn:**\n{card_text}\n\n"
->>>>>>> 562a91bc295ba799c5adbed395fa74d04b7ce5a6
-            f"Give a detailed response based on the intent and meanings."
-        )
+    f"Act as a tarot expert. Based on the following cards and meanings:\n"
+    f"{card_text}\n\n"
+    f"Answer this question: {user_input}\n"
+    f"Be concise and direct."
+)
+
 
         # 4. Send prompt to LLM
         response = st.session_state.chat_engine.chat(prompt)
@@ -262,8 +217,4 @@ if user_input:
 # Display the chat history below the input box
 if st.session_state.chat_history:                                 # <-- NEW: Show conversation history
     for role, text in st.session_state.chat_history:
-<<<<<<< HEAD
         st.write(f"{role}:** {text}")
-=======
-        st.write(f"**{role}:** {text}")
->>>>>>> 562a91bc295ba799c5adbed395fa74d04b7ce5a6

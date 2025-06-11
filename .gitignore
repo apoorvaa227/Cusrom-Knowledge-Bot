@@ -1,0 +1,24 @@
+<<<<<<< HEAD
+=======
+# Ignore Python virtual environment
+>>>>>>> 562a91bc295ba799c5adbed395fa74d04b7ce5a6
+venv/
+
+# Bytecode files
+__pycache__/
+*.pyc
+
+# Editor settings
+.vscode/
+
+# Logs
+*.log
+
+# Mac/Windows system files
+.DS_Store
+Thumbs.db
+<<<<<<< HEAD
+.env
+=======
+.env
+>>>>>>> 562a91bc295ba799c5adbed395fa74d04b7ce5a6
